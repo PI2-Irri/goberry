@@ -23,7 +23,9 @@ type API struct {
 	client       http.Client
 }
 
-var paths = map[string]string{
+// APIPaths is a map where the keys are the paths names and
+// the values are the url path
+var APIPaths = map[string]string{
 	"login":       "/login/",
 	"controllers": "/controllers/",
 }
@@ -43,7 +45,11 @@ func Create() *API {
 	return api
 }
 
-func (api *API) get(url string, data interface{}) {
+// Get makes a GET request to the API using data as the body response
+// converted to an interface{} and the body as the json sent to the API
+func (api *API) Get(pathName string, data interface{}) {
+	url := api.buildURL(pathName)
+
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -55,18 +61,22 @@ func (api *API) get(url string, data interface{}) {
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	content, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = json.Unmarshal(body, data)
+	err = json.Unmarshal(content, data)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func (api *API) post(url string, body map[string]string, data interface{}) {
+// Post makes a POST request to the API using data as the body response
+// converted to an interface{} and body as the request body
+func (api *API) Post(pathName string, body interface{}, data interface{}) {
+	url := api.buildURL(pathName)
+
 	jsonData, err := json.Marshal(body)
 	if err != nil {
 		log.Fatal(err)
@@ -95,18 +105,9 @@ func (api *API) post(url string, body map[string]string, data interface{}) {
 	}
 }
 
-// GetControllers gets all the controllers for the
-// logged in user
-func (api *API) GetControllers() {
-	url := api.buildURL("controllers")
-	var data []map[string]interface{}
-	api.get(url, &data)
-}
-
 // Login get the client connected to the
 // api as the goberry user
 func (api *API) Login() {
-	url := api.buildURL("login")
 	// TODO: maybe make this safe?
 	data := map[string]string{
 		"username": "goberry",
@@ -114,7 +115,7 @@ func (api *API) Login() {
 	}
 
 	var res map[string]interface{}
-	api.post(url, data, &res)
+	api.Post("login", data, &res)
 	if res["token"] == nil {
 		log.Fatal("User not registered")
 	}
@@ -129,7 +130,7 @@ func (api *API) configurate() {
 }
 
 func (api *API) buildURL(pathName string) string {
-	ret := api.url + paths[pathName]
+	ret := api.url + APIPaths[pathName]
 	return ret
 }
 
