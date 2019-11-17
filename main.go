@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"sync"
 
 	"github.com/PI2-Irri/goberry/api"
 	"github.com/PI2-Irri/goberry/common"
@@ -28,5 +29,14 @@ func main() {
 
 	// Creates TCP socket
 	tcpSocket := socket.Create()
-	tcpSocket.AcceptConnections()
+	// Runs it in another thread
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		tcpSocket.AcceptConnections()
+		wg.Done()
+	}()
+
+	// Wait for all threads to be finished
+	wg.Wait()
 }
