@@ -6,6 +6,7 @@ import (
 	"github.com/PI2-Irri/goberry/api"
 	"github.com/PI2-Irri/goberry/common"
 	"github.com/PI2-Irri/goberry/controller"
+	"github.com/PI2-Irri/goberry/socket"
 )
 
 func init() {
@@ -17,13 +18,15 @@ func main() {
 
 	common.SetFlags()
 
-	// 1. do controller sync stuff
 	// Creates the API object and logs in
 	api := api.Create()
 	api.Login()
 	// Creates the Controller
 	ctr := controller.Create(api)
 	log.Println(ctr)
-	// 2. start polling the api for commands
-	// 3. start websocket for listening elet
+	// TODO: Starts controller http polling
+
+	// Creates TCP socket
+	tcpSocket := socket.Create()
+	tcpSocket.AcceptConnections()
 }

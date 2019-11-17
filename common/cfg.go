@@ -12,13 +12,19 @@ import (
 // Cfg is the type which holds all configurations
 // variables for the project
 type Cfg struct {
-	API map[string]interface{}
+	API    map[string]interface{}
+	Socket map[string]string
 }
 
-var configPath string // path to json file cfg.json
+var (
+	configPath string // path to json file cfg.json
+	singleton  *Cfg   // singleton instance of Cfg
+)
 
 func init() {
 	log.SetFlags(log.Ltime)
+
+	singleton = nil
 
 	if JSONPath == "" {
 		log.Println("JSON path not set")
@@ -34,6 +40,10 @@ func init() {
 // LoadConfiguration loads the cfg.json file
 // and returns its data as a Cfg type
 func LoadConfiguration() *Cfg {
+	if singleton != nil {
+		return singleton
+	}
+
 	cfg, err := ioutil.ReadFile(JSONPath)
 	if err != nil {
 		log.Fatal(err)
@@ -45,5 +55,6 @@ func LoadConfiguration() *Cfg {
 		log.Fatal(err)
 	}
 
+	singleton = &config
 	return &config
 }

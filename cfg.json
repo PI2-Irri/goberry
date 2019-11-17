@@ -4,5 +4,9 @@
     "host": "127.0.0.1",
     "port": 4001,
     "pollInterval": 2
+  },
+  "socket": {
+    "host": "",
+    "port": "9000"
   }
 }
