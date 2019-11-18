@@ -5,8 +5,12 @@
     "port": 4001,
     "pollInterval": 2
   },
-  "socket": {
+  "socketServer": {
     "host": "",
     "port": "9000"
+  },
+  "socketClient": {
+    "host": "127.0.0.1",
+    "port": "9001"
   }
 }

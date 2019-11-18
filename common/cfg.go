@@ -12,8 +12,9 @@ import (
 // Cfg is the type which holds all configurations
 // variables for the project
 type Cfg struct {
-	API    map[string]interface{}
-	Socket map[string]string
+	API          map[string]interface{}
+	SocketServer map[string]string
+	SocketClient map[string]string
 }
 
 var (

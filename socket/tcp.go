@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/PI2-Irri/goberry/common"
+	"github.com/PI2-Irri/goberry/measurement"
 )
 
 // Socket type holds the informations necessary
@@ -25,8 +26,8 @@ func Create() *Socket {
 	config := common.LoadConfiguration()
 
 	s := &Socket{
-		Host: config.Socket["host"],
-		Port: config.Socket["port"],
+		Host: config.SocketServer["host"],
+		Port: config.SocketServer["port"],
 	}
 
 	list := []string{s.Host, s.Port}
@@ -58,11 +59,14 @@ func (s *Socket) AcceptConnections() {
 
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
+
 	scanner := bufio.NewScanner(conn)
 	for scanner.Scan() {
 		msg := scanner.Text()
 		log.Println("Received:", msg)
-		conn.Write([]byte(msg + "\n"))
+		sender := measurement.ParseMessage(msg)
+		measurement.Queue <- sender
+		conn.Write([]byte("OK\n"))
 	}
 
 	err := scanner.Err()
