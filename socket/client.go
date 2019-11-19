@@ -5,7 +5,6 @@ import (
 	"log"
 	"net"
 	"strings"
-	"time"
 
 	"github.com/PI2-Irri/goberry/common"
 )
@@ -48,23 +47,9 @@ func (c *Client) connect() {
 
 	log.Println("Client connecting to:", hostport)
 
-	var conn net.Conn
-	var err error
-
-	// tries three times to connect
-	for i := 0; i < 3; i++ {
-		conn, err = net.Dial(network, hostport)
-		log.Println("i =", i)
-		if err != nil && i < 2 {
-			log.Println(err)
-			log.Println("Trying again client connection in 2 seconds")
-			time.Sleep(time.Second * 2)
-			// continue
-		} else if err != nil {
-			log.Fatal(err)
-		} else {
-			break
-		}
+	conn, err := net.Dial(network, hostport)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	log.Println("Client connected with:", conn.RemoteAddr())
