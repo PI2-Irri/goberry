@@ -61,16 +61,35 @@ func (c *Client) connect() {
 
 func handleClientConnection(conn net.Conn) {
 	connBuffer := bufio.NewReader(conn)
+
+	str, _ := readString(connBuffer, true)
+	if str != "HELO" {
+		log.Fatal("Client didnt receive HELO from the server")
+	}
+
 	for {
-		str, err := connBuffer.ReadString('\n')
-		if err != nil {
-			log.Println("Connection closed with ", conn.RemoteAddr())
+		// TODO: Send the command message
+		str, err := readString(connBuffer, false)
+		if err {
 			break
 		}
-		if len(str) > 0 {
-			// TODO: parse message
-			log.Println("Client received:", str)
+		if str != "OK" {
+			log.Fatal("Client didnt receive OK from the server")
 		}
 	}
 
+}
+
+func readString(buffer *bufio.Reader, isErrorFatal bool) (str string, hadError bool) {
+	var err error
+	str, err = buffer.ReadString('\n')
+
+	if err != nil && isErrorFatal {
+		log.Fatal(err)
+	} else if err != nil {
+		hadError = true
+	}
+
+	log.Println("Client received:", str)
+	return
 }

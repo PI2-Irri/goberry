@@ -63,6 +63,7 @@ func (s *Server) AcceptConnections() {
 func handleServerConnection(conn net.Conn) {
 	defer conn.Close()
 
+	conn.Write([]byte("HELO\n"))
 	scanner := bufio.NewScanner(conn)
 	for scanner.Scan() {
 		msg := scanner.Text()
