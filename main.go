@@ -7,7 +7,7 @@ import (
 	"github.com/PI2-Irri/goberry/api"
 	"github.com/PI2-Irri/goberry/common"
 	"github.com/PI2-Irri/goberry/controller"
-	"github.com/PI2-Irri/goberry/socket"
+	"github.com/PI2-Irri/goberry/server"
 )
 
 func init() {
@@ -28,7 +28,7 @@ func main() {
 	// TODO: Starts controller http polling
 
 	// Creates TCP socket
-	tcpSocket := socket.Create()
+	tcpSocket := server.Create()
 	// Runs it in another thread
 	var wg sync.WaitGroup
 	wg.Add(1)
