@@ -28,6 +28,7 @@ func Create(api *api.API) *Controller {
 	return ctr
 }
 
+// TODO: Change to fetch from /controllers?token=xxxx
 func (c *Controller) fetchController() {
 	var res []map[string]interface{}
 	c.api.Get("controllers", &res)

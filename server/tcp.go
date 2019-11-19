@@ -46,6 +46,7 @@ func Create() *Socket {
 // continuously accepts connections
 func (s *Socket) AcceptConnections() {
 	log.Println("Socket accepting connection")
+	defer close(measurement.Queue)
 	for {
 		conn, err := s.listener.Accept()
 		remote := conn.RemoteAddr().String()
