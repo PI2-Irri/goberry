@@ -1,4 +1,4 @@
-package server
+package socket
 
 import (
 	"bufio"
@@ -10,9 +10,9 @@ import (
 	"github.com/PI2-Irri/goberry/measurement"
 )
 
-// Socket type holds the informations necessary
+// Server type holds the informations necessary
 // for configuring a TCP socket
-type Socket struct {
+type Server struct {
 	Host     string
 	Port     string
 	listener net.Listener
@@ -20,12 +20,12 @@ type Socket struct {
 
 const network = "tcp"
 
-// Create instantiates a socket properly configures
+// CreateServer instantiates a socket properly configures
 // according to a cfg.json
-func Create() *Socket {
+func CreateServer() *Server {
 	config := common.LoadConfiguration()
 
-	s := &Socket{
+	s := &Server{
 		Host: config.SocketServer["host"],
 		Port: config.SocketServer["port"],
 	}
@@ -44,27 +44,29 @@ func Create() *Socket {
 
 // AcceptConnections starts the socket activa phase where it
 // continuously accepts connections
-func (s *Socket) AcceptConnections() {
-	log.Println("Socket accepting connection")
-	defer close(measurement.Queue)
+func (s *Server) AcceptConnections() {
+	log.Println("Server accepting connections")
 	for {
 		conn, err := s.listener.Accept()
-		remote := conn.RemoteAddr().String()
-		log.Println("Starting connection with:", remote)
 		if err != nil {
 			log.Fatal(err)
 		}
-		handleConnection(conn)
+		remote := conn.RemoteAddr().String()
+		log.Println("Server connected with:", remote)
+
+		handleServerConnection(conn)
+
+		log.Println("Server disconnected with:", remote)
 	}
 }
 
-func handleConnection(conn net.Conn) {
+func handleServerConnection(conn net.Conn) {
 	defer conn.Close()
 
 	scanner := bufio.NewScanner(conn)
 	for scanner.Scan() {
 		msg := scanner.Text()
-		log.Println("Received:", msg)
+		log.Println("Server received:", msg)
 		sender := measurement.ParseMessage(msg)
 		measurement.Queue <- sender
 		conn.Write([]byte("OK\n"))

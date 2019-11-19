@@ -7,7 +7,8 @@ import (
 	"github.com/PI2-Irri/goberry/api"
 	"github.com/PI2-Irri/goberry/common"
 	"github.com/PI2-Irri/goberry/controller"
-	"github.com/PI2-Irri/goberry/server"
+	"github.com/PI2-Irri/goberry/measurement"
+	"github.com/PI2-Irri/goberry/socket"
 )
 
 func init() {
@@ -27,15 +28,26 @@ func main() {
 	log.Println(ctr)
 	// TODO: Starts controller http polling
 
-	// Creates TCP socket
-	tcpSocket := server.Create()
+	// Creates TCP server socket
+	serverSocket := socket.CreateServer()
 	// Runs it in another thread
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
-		tcpSocket.AcceptConnections()
+		serverSocket.AcceptConnections()
 		wg.Done()
 	}()
+	defer close(measurement.Queue)
+
+	// Creates a TCP client socket
+	clientSocket := socket.CreateClient()
+	// Runs client thread
+	wg.Add(1)
+	go func() {
+		clientSocket.Start()
+		wg.Done()
+	}()
+	defer close(socket.ClientQueue)
 
 	// Wait for all threads to be finished
 	wg.Wait()
