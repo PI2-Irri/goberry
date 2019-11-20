@@ -16,10 +16,6 @@ func ParseMessage(msg string) Sender {
 		data[keyValue[0]] = keyValue[1]
 	}
 
-	// for k, v := range data {
-	// 	log.Println("\t", k, ":", v)
-	// }
-
 	if data["type"] == "0" {
 		return CreateActuator(data)
 	} else if data["type"] == "1" {

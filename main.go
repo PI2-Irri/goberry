@@ -21,10 +21,10 @@ func main() {
 	common.SetFlags()
 
 	// Creates the API object and logs in
-	api := api.Create()
+	api := api.Instance()
 	api.Login()
 	// Creates the Controller
-	ctr := controller.Create(api)
+	ctr := controller.Create()
 	log.Println(ctr)
 	// TODO: Starts controller http polling
 

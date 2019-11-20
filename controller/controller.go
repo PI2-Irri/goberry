@@ -16,14 +16,12 @@ type Controller struct {
 	Timer    int
 	Read     bool
 	Status   bool
-	api      *api.API
 }
 
 // Create creates and configurates properly a controller
 // with a given API object
-func Create(api *api.API) *Controller {
+func Create() *Controller {
 	ctr := &Controller{
-		api:   api,
 		Token: common.Pin,
 	}
 	ctr.fetchController()
@@ -32,7 +30,8 @@ func Create(api *api.API) *Controller {
 
 func (c *Controller) fetchController() {
 	var res map[string]interface{}
-	c.api.GetController(c.Token, &res)
+	api := api.Instance()
+	api.GetController(c.Token, &res)
 
 	// if controller doesnt exist
 	value, ok := res["detail"]
@@ -55,7 +54,8 @@ func (c *Controller) registerController() {
 		"token":     c.Token,
 		"is_active": true,
 	}
-	c.api.Post("controllers", data, &res)
+	api := api.Instance()
+	api.Post("controllers", data, &res)
 	c.initialize(res)
 }
 

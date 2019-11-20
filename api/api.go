@@ -29,7 +29,10 @@ var APIPaths = map[string]string{
 	"login":       "/login/",
 	"controllers": "/controllers/",
 	"controller":  "/controllers/",
+	"actuator":    "/actuators_measurements/",
 }
+
+var singletonAPI *API
 
 var apiConfig map[string]interface{}
 
@@ -38,12 +41,17 @@ func init() {
 	apiConfig = config.API
 }
 
-// Create creates and initializes the API object
-func Create() *API {
+// Instance creates and initializes the API object if has not been initialized yet
+func Instance() *API {
+	if singletonAPI != nil {
+		return singletonAPI
+	}
+
 	api := &API{}
 	api.configurate()
 	api.buildBaseURL()
-	return api
+	singletonAPI = api
+	return singletonAPI
 }
 
 // Get makes a GET request to the API using data as the body response
