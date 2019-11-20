@@ -10,10 +10,12 @@ import (
 // Controller holds all data and methods to
 // dealing with the controller in the API
 type Controller struct {
-	ID       int
 	Name     string
 	IsActive bool
 	Token    string
+	Timer    int
+	Read     bool
+	Status   bool
 	api      *api.API
 }
 
@@ -28,25 +30,25 @@ func Create(api *api.API) *Controller {
 	return ctr
 }
 
-// TODO: Change to fetch from /controllers?token=xxxx
 func (c *Controller) fetchController() {
-	var res []map[string]interface{}
-	c.api.Get("controllers", &res)
+	var res map[string]interface{}
+	c.api.GetController(c.Token, &res)
 
-	for _, ctr := range res {
-		var token string
-		token = ctr["token"].(string)
-		if token != c.Token {
-			continue
-		}
-		c.initialize(ctr)
-		log.Println("Fetched controller succesfully")
+	// if controller doesnt exist
+	value, ok := res["detail"]
+	if ok && value == "Not found." {
+		c.registerController()
 		return
 	}
-	c.registerController()
+
+	// controller already exists
+	log.Println("Controller already exists")
+	c.initialize(res)
 }
 
 func (c *Controller) registerController() {
+	log.Println("Registering controller")
+
 	var res map[string]interface{}
 	data := map[string]interface{}{
 		"name":      "Berry-" + c.Token,
@@ -58,7 +60,9 @@ func (c *Controller) registerController() {
 }
 
 func (c *Controller) initialize(ctr map[string]interface{}) {
-	c.ID = int(ctr["id"].(float64))
 	c.Name = ctr["name"].(string)
 	c.IsActive = ctr["is_active"].(bool)
+	c.Status = ctr["permit_irrigation"].(bool)
+	c.Timer = int(ctr["time_to_irrigate"].(float64))
+	c.Read = ctr["requested"].(bool)
 }

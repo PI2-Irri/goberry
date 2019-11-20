@@ -28,6 +28,7 @@ type API struct {
 var APIPaths = map[string]string{
 	"login":       "/login/",
 	"controllers": "/controllers/",
+	"controller":  "/controllers/",
 }
 
 var apiConfig map[string]interface{}
@@ -70,6 +71,13 @@ func (api *API) Get(pathName string, data interface{}) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+// GetController fetches for a specific controller
+func (api *API) GetController(token string, data interface{}) {
+	url := api.buildURL("controller") + token + "/"
+
+	api.Get(url, &data)
 }
 
 // Post makes a POST request to the API using data as the body response
@@ -130,7 +138,13 @@ func (api *API) configurate() {
 }
 
 func (api *API) buildURL(pathName string) string {
-	ret := api.url + APIPaths[pathName]
+	value, ok := APIPaths[pathName]
+
+	if !ok {
+		return pathName
+	}
+
+	ret := api.url + value
 	return ret
 }
 
