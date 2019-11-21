@@ -24,9 +24,7 @@ func main() {
 	api := api.Instance()
 	api.Login()
 	// Creates the Controller
-	ctr := controller.Create()
-	log.Println(ctr)
-	// TODO: Starts controller http polling
+	ctr := controller.Instance()
 
 	// Creates TCP server socket
 	serverSocket := socket.CreateServer()
@@ -57,5 +55,6 @@ func main() {
 	}()
 
 	// Wait for all threads to be finished
+	log.Println("Everything started")
 	wg.Wait()
 }

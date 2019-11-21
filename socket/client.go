@@ -47,20 +47,19 @@ func (c *Client) connect() {
 	var conn net.Conn
 	var err error
 
+	log.Println("Client starting connection with:", hostport)
 	for {
-		log.Println("Client connecting to:", hostport)
 
 		conn, err = net.Dial(network, hostport)
 		if err != nil {
-			log.Println(err)
-			log.Println("Trying again in 5 seconds")
+			log.Println("Client could not connect:\n\t", err)
 			time.Sleep(time.Second * 5)
 		} else {
 			break
 		}
 	}
 
-	log.Println("Client connected with:", conn.RemoteAddr())
+	log.Println("Client connected successfully with:", conn.RemoteAddr())
 
 	for msg := range ClientQueue {
 		log.Println("Client queue received:", msg)

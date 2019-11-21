@@ -19,14 +19,21 @@ type Controller struct {
 	Status   bool
 }
 
+var instance *Controller
+
 // Create creates and configurates properly a controller
 // with a given API object
-func Create() *Controller {
+func Instance() *Controller {
+	if instance != nil {
+		return instance
+	}
+
 	ctr := &Controller{
 		Token: common.Pin,
 	}
 	ctr.fetchController()
-	return ctr
+	instance = ctr
+	return instance
 }
 
 func (c *Controller) fetchController() {
@@ -73,6 +80,7 @@ func (c *Controller) Poll() {
 	var res map[string]interface{}
 	api := api.Instance()
 	for {
+		log.Println("Polling controller")
 		api.GetController(c.Token, &res)
 		if !res["read"].(bool) {
 			log.Println("New command:", res["status"], res["timer"])

@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/PI2-Irri/goberry/api"
-	"github.com/PI2-Irri/goberry/common"
+	"github.com/PI2-Irri/goberry/controller"
 )
 
 // Actuator holds all data to be sent to the api
@@ -22,9 +22,11 @@ func (a *Actuator) Send() {
 	data := make(map[string]interface{}, 3)
 	res := make(map[string]interface{})
 
+	ctr := controller.Instance()
+
 	data["water_consumption"] = a.WaterConsumption
 	data["reservoir_level"] = a.ReservoirLevel
-	data["token"] = common.Pin
+	data["token"] = ctr.Token
 
 	api := api.Instance()
 	api.Post("actuator", data, &res)
