@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/PI2-Irri/goberry/api"
-	"github.com/PI2-Irri/goberry/controller"
+	"github.com/PI2-Irri/goberry/common"
 )
 
 // Module holds all data to be sent to the api
@@ -24,13 +24,11 @@ func (m *Module) Send() {
 	data := make(map[string]interface{}, 4)
 	res := make(map[string]interface{})
 
-	ctr := controller.Instance()
-
 	data["soil_temperature"] = m.Temperature
 	data["ground_humidity"] = m.GroundHumidity
 	data["battery_level"] = m.BatteryLevel
 	data["rf_address"] = m.RFAddress
-	data["token"] = ctr.Token
+	data["token"] = common.Pin
 
 	api := api.Instance()
 	api.Post("module", data, &res)

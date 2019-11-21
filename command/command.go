@@ -4,6 +4,8 @@ import (
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/PI2-Irri/goberry/socket"
 )
 
 // Command is a struct representation of the command that will be sent to
@@ -35,5 +37,7 @@ func (c *Command) ToString() string {
 
 // Send parses and send the command to the tcp socket
 func (c *Command) Send() {
-	log.Println(c.ToString())
+	cmd := c.ToString()
+	log.Println("Sending:", cmd)
+	socket.ClientQueue <- cmd
 }

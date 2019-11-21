@@ -21,6 +21,10 @@ type Client struct {
 	Port string
 }
 
+func init() {
+	ClientQueue = make(chan string, 1024)
+}
+
 // CreateClient creates a Client and set all fields
 // acording to the configuration json
 func CreateClient() *Client {
@@ -61,6 +65,12 @@ func (c *Client) connect() {
 
 	log.Println("Client connected successfully with:", conn.RemoteAddr())
 
+	connBuffer := bufio.NewReader(conn)
+	str, _ := readString(connBuffer, true)
+	if !strings.Contains(str, "HELO") {
+		log.Fatal("Client didn't receive HELO from the server")
+	}
+
 	for msg := range ClientQueue {
 		log.Println("Client queue received:", msg)
 		handleClientConnection(conn, msg)
@@ -72,20 +82,12 @@ func (c *Client) connect() {
 func handleClientConnection(conn net.Conn, msg string) {
 	connBuffer := bufio.NewReader(conn)
 
-	str, _ := readString(connBuffer, true)
-	if str != "HELO" {
-		log.Fatal("Client didnt receive HELO from the server")
-	}
-
-	for {
-		conn.Write([]byte(msg)) // TODO: test this
-		str, err := readString(connBuffer, false)
-		if err {
-			break
-		}
-		if str != "OK" {
-			log.Fatal("Client didnt receive OK from the server")
-		}
+	conn.Write([]byte(msg + "\n")) // TODO: test this
+	str, _ := readString(connBuffer, false)
+	str = str[:len(str)-1]
+	log.Println("Client received:", str)
+	if !strings.Contains(str, "OK") {
+		log.Fatal("Client didn't receive OK from the server")
 	}
 
 }
@@ -100,6 +102,5 @@ func readString(buffer *bufio.Reader, isErrorFatal bool) (str string, hadError b
 		hadError = true
 	}
 
-	log.Println("Client received:", str)
-	return
+	return str, hadError
 }

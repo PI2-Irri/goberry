@@ -85,7 +85,6 @@ func (c *Controller) Poll() {
 		log.Println("Polling controller")
 		api.GetController(c.Token, &res)
 		if !res["read"].(bool) {
-			log.Println("New command:", res["status"], res["timer"])
 			data := map[string]bool{"read": true}
 			api.PatchController(common.Pin, data, &resPatch)
 			// TODO: send new command
