@@ -51,7 +51,7 @@ func (c *Client) connect() {
 	var conn net.Conn
 	var err error
 
-	log.Println("Client starting connection with:", hostport)
+	log.Println("Client trying connection with:", hostport)
 	for {
 
 		conn, err = net.Dial(network, hostport)
