@@ -2,6 +2,7 @@ package controller
 
 import (
 	"log"
+	"time"
 
 	"github.com/PI2-Irri/goberry/api"
 	"github.com/PI2-Irri/goberry/common"
@@ -65,4 +66,20 @@ func (c *Controller) initialize(ctr map[string]interface{}) {
 	c.Status = ctr["status"].(bool)
 	c.Timer = int(ctr["timer"].(float64))
 	c.Read = ctr["read"].(bool)
+}
+
+// Poll starts an http polling for changes in the controller state
+func (c *Controller) Poll() {
+	var res map[string]interface{}
+	api := api.Instance()
+	for {
+		api.GetController(c.Token, &res)
+		if !res["read"].(bool) {
+			log.Println("New command:", res["status"], res["timer"])
+			data := map[string]bool{"read": true}
+			api.PatchController(common.Pin, data, &res)
+			// TODO: send new command
+		}
+		time.Sleep(time.Second * 5)
+	}
 }

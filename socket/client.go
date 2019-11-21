@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"strings"
+	"time"
 
 	"github.com/PI2-Irri/goberry/common"
 )
@@ -36,30 +37,40 @@ func CreateClient() *Client {
 // Start opens a thread which listens for the Queue channel
 // receiving strings to send to the server
 func (c *Client) Start() {
-	for msg := range ClientQueue {
-		log.Println("Client queue received:", msg)
-	}
+	c.connect()
 }
 
 func (c *Client) connect() {
 	list := []string{c.Host, c.Port}
 	hostport := strings.Join(list, ":")
 
-	log.Println("Client connecting to:", hostport)
+	var conn net.Conn
+	var err error
 
-	conn, err := net.Dial(network, hostport)
-	if err != nil {
-		log.Fatal(err)
+	for {
+		log.Println("Client connecting to:", hostport)
+
+		conn, err = net.Dial(network, hostport)
+		if err != nil {
+			log.Println(err)
+			log.Println("Trying again in 5 seconds")
+			time.Sleep(time.Second * 5)
+		} else {
+			break
+		}
 	}
 
 	log.Println("Client connected with:", conn.RemoteAddr())
 
-	handleClientConnection(conn)
+	for msg := range ClientQueue {
+		log.Println("Client queue received:", msg)
+		handleClientConnection(conn, msg)
+	}
 
 	log.Println("Client disconnected with:", conn.RemoteAddr())
 }
 
-func handleClientConnection(conn net.Conn) {
+func handleClientConnection(conn net.Conn, msg string) {
 	connBuffer := bufio.NewReader(conn)
 
 	str, _ := readString(connBuffer, true)
@@ -68,7 +79,7 @@ func handleClientConnection(conn net.Conn) {
 	}
 
 	for {
-		// TODO: Send the command message
+		conn.Write([]byte(msg)) // TODO: test this
 		str, err := readString(connBuffer, false)
 		if err {
 			break

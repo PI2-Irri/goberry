@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/PI2-Irri/goberry/common"
 )
@@ -89,6 +90,12 @@ func (api *API) GetController(token string, data interface{}) {
 	api.Get(url, &data)
 }
 
+// PatchController patches the controller with the data
+func (api *API) PatchController(token string, data interface{}, res interface{}) {
+	url := api.buildURL("controller") + token + "/"
+	api.Post(url, data, &res)
+}
+
 // Post makes a POST request to the API using data as the body response
 // converted to an interface{} and body as the request body
 func (api *API) Post(pathName string, body interface{}, data interface{}) {
@@ -99,7 +106,13 @@ func (api *API) Post(pathName string, body interface{}, data interface{}) {
 		log.Fatal(err)
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	method := "POST"
+	isController := strings.Contains(pathName, "controllers/"+common.Pin)
+	if isController {
+		method = "PATCH"
+	}
+
+	req, err := http.NewRequest(method, url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		log.Fatal(err)
 	}

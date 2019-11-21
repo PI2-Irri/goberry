@@ -49,6 +49,13 @@ func main() {
 	}()
 	defer close(socket.ClientQueue)
 
+	// Starts the HTTP Polling
+	wg.Add(1)
+	go func() {
+		ctr.Poll()
+		wg.Done()
+	}()
+
 	// Wait for all threads to be finished
 	wg.Wait()
 }
