@@ -3,6 +3,9 @@ package measurement
 import (
 	"log"
 	"strconv"
+
+	"github.com/PI2-Irri/goberry/api"
+	"github.com/PI2-Irri/goberry/common"
 )
 
 // Module holds all data to be sent to the api
@@ -17,6 +20,23 @@ type Module struct {
 // Send sends the module data to the API
 func (m *Module) Send() {
 	log.Println("Module send")
+
+	data := make(map[string]interface{}, 4)
+	res := make(map[string]interface{})
+
+	data["soil_temperature"] = m.Temperature
+	data["ground_humidity"] = m.GroundHumidity
+	data["battery_level"] = m.BatteryLevel
+	data["rf_address"] = m.RFAddress
+	data["token"] = common.Pin
+
+	api := api.Instance()
+	api.Post("module", data, &res)
+
+	val, ok := res["error"]
+	if ok {
+		log.Fatal("Error ocurred during module measurement send:", val)
+	}
 }
 
 // CreateModule creates a module with the given map[string]string

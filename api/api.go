@@ -30,6 +30,7 @@ var APIPaths = map[string]string{
 	"controllers": "/controllers/",
 	"controller":  "/controllers/",
 	"actuator":    "/actuators_measurements/",
+	"module":      "/modules_measurements/",
 }
 
 var singletonAPI *API

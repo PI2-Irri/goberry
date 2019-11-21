@@ -62,7 +62,7 @@ func (c *Controller) registerController() {
 func (c *Controller) initialize(ctr map[string]interface{}) {
 	c.Name = ctr["name"].(string)
 	c.IsActive = ctr["is_active"].(bool)
-	c.Status = ctr["permit_irrigation"].(bool)
-	c.Timer = int(ctr["time_to_irrigate"].(float64))
-	c.Read = ctr["requested"].(bool)
+	c.Status = ctr["status"].(bool)
+	c.Timer = int(ctr["timer"].(float64))
+	c.Read = ctr["read"].(bool)
 }
