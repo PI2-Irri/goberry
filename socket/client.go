@@ -65,11 +65,11 @@ func (c *Client) connect() {
 
 	log.Println("Client connected successfully with:", conn.RemoteAddr())
 
-	connBuffer := bufio.NewReader(conn)
-	str, _ := readString(connBuffer, true)
-	if !strings.Contains(str, "HELO") {
-		log.Fatal("Client didn't receive HELO from the server")
-	}
+	// connBuffer := bufio.NewReader(conn)
+	// str, _ := readString(connBuffer, true)
+	// if !strings.Contains(str, "HELO") {
+	// 	log.Fatal("Client didn't receive HELO from the server")
+	// }
 
 	for msg := range ClientQueue {
 		log.Println("Client queue received:", msg)
@@ -80,15 +80,15 @@ func (c *Client) connect() {
 }
 
 func handleClientConnection(conn net.Conn, msg string) {
-	connBuffer := bufio.NewReader(conn)
+	// connBuffer := bufio.NewReader(conn)
 
 	conn.Write([]byte(msg + "\n")) // TODO: test this
-	str, _ := readString(connBuffer, false)
-	str = str[:len(str)-1]
-	log.Println("Client received:", str)
-	if !strings.Contains(str, "OK") {
-		log.Fatal("Client didn't receive OK from the server")
-	}
+	// str, _ := readString(connBuffer, false)
+	// str = str[:len(str)-1]
+	// log.Println("Client received:", str)
+	// if !strings.Contains(str, "OK") {
+	// 	log.Fatal("Client didn't receive OK from the server")
+	// }
 
 }
 

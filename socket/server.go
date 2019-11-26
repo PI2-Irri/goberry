@@ -63,14 +63,14 @@ func (s *Server) AcceptConnections() {
 func handleServerConnection(conn net.Conn) {
 	defer conn.Close()
 
-	conn.Write([]byte("HELO\n"))
+	// conn.Write([]byte("HELO\n"))
 	scanner := bufio.NewScanner(conn)
 	for scanner.Scan() {
 		msg := scanner.Text()
 		log.Println("Server received:", msg)
 		sender := measurement.ParseMessage(msg)
 		measurement.Queue <- sender
-		conn.Write([]byte("OK\n"))
+		// conn.Write([]byte("OK\n"))
 	}
 
 	err := scanner.Err()

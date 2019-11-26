@@ -114,24 +114,24 @@ func (api *API) Post(pathName string, body interface{}, data interface{}) {
 
 	req, err := http.NewRequest(method, url, bytes.NewBuffer(jsonData))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Request creation error:", err)
 	}
 	api.insertHeaders(req)
 
 	res, err := api.client.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Request send error:", err)
 	}
 	defer res.Body.Close()
 
 	resContent, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Body read error:", err)
 	}
 
 	err = json.Unmarshal(resContent, data)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Json Unmarshal error:", err)
 	}
 }
 
