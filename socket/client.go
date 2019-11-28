@@ -82,7 +82,13 @@ func (c *Client) connect() {
 func handleClientConnection(conn net.Conn, msg string) {
 	// connBuffer := bufio.NewReader(conn)
 
-	conn.Write([]byte(msg + "\n")) // TODO: test this
+	message := []byte(msg + "\n")
+	n, err := conn.Write(message)
+	if err != nil || n != len(message) {
+		log.Println("Error while trying to send message to server")
+		log.Println("\tError:", err)
+		log.Fatal("\tBytes:", n)
+	}
 	// str, _ := readString(connBuffer, false)
 	// str = str[:len(str)-1]
 	// log.Println("Client received:", str)

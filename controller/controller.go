@@ -82,7 +82,7 @@ func (c *Controller) Poll() {
 	var resPatch map[string]interface{}
 	api := api.Instance()
 	for {
-		log.Println("Polling controller")
+		// log.Println("Polling controller")
 		api.GetController(c.Token, &res)
 		if !res["read"].(bool) {
 			data := map[string]bool{"read": true}
