@@ -3,6 +3,7 @@ package measurement
 import (
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/PI2-Irri/goberry/api"
 	"github.com/PI2-Irri/goberry/common"
@@ -33,7 +34,13 @@ func (m *Module) Send() {
 	api := api.Instance()
 	api.Post("module", data, &res)
 
-	val, ok := res["error"]
+	val, ok := res["error"].(string)
+
+	if ok && strings.Contains(val, "Zone not found") {
+		log.Println("No zone found, ignoring message")
+		return
+	}
+
 	if ok {
 		log.Fatal("Error ocurred during module measurement send:", val)
 	}
