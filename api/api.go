@@ -32,6 +32,7 @@ var APIPaths = map[string]string{
 	"controller":  "/controllers/",
 	"actuator":    "/actuators_measurements/",
 	"module":      "/modules_measurements/",
+	"signup":      "/signup/",
 }
 
 var singletonAPI *API
@@ -133,6 +134,30 @@ func (api *API) Post(pathName string, body interface{}, data interface{}) {
 	if err != nil {
 		log.Fatal("Json Unmarshal error:", err)
 	}
+}
+
+// SignUp tries to register an user and ignores if it
+// already exists
+func (api *API) SignUp() {
+	data := map[string]string{
+		"username": "goberry",
+		"password": "goberry",
+		"fullname": "Go Berry",
+		"email":    "go@berry.com",
+	}
+
+	var res map[string]interface{}
+	api.Post("signup", data, &res)
+
+	_, ok := res["error"]
+	if ok {
+		log.Println("Error registering user:")
+		for _, value := range res {
+			log.Println("\t", value)
+		}
+		return
+	}
+	log.Println("User registered succesfully")
 }
 
 // Login get the client connected to the

@@ -68,6 +68,12 @@ func handleServerConnection(conn net.Conn) {
 	for scanner.Scan() {
 		msg := scanner.Text()
 		log.Println("Server received:", msg)
+
+		if strings.Contains(msg, "HELO") {
+			conn.Write([]byte("OK\n"))
+			continue
+		}
+
 		sender := measurement.ParseMessage(msg)
 		measurement.Queue <- sender
 		// conn.Write([]byte("OK\n"))

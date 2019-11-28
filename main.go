@@ -22,6 +22,7 @@ func main() {
 
 	// Creates the API object and logs in
 	api := api.Instance()
+	api.SignUp()
 	api.Login()
 	// Creates the Controller
 	ctr := controller.Instance()
