@@ -94,6 +94,9 @@ func (c *Controller) Poll() {
 			}
 			cmd.Send()
 		}
-		time.Sleep(time.Second * 5)
+		duration := time.Duration(
+			common.LoadConfiguration().API["pollInterval"].(float64),
+		)
+		time.Sleep(duration * time.Second)
 	}
 }
