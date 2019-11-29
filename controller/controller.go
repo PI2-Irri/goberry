@@ -82,12 +82,10 @@ func (c *Controller) Poll() {
 	var resPatch map[string]interface{}
 	api := api.Instance()
 	for {
-		// log.Println("Polling controller")
 		api.GetController(c.Token, &res)
 		if !res["read"].(bool) {
 			data := map[string]bool{"read": true}
 			api.PatchController(common.Pin, data, &resPatch)
-			// TODO: send new command
 			cmd := &command.Command{
 				Status: res["status"].(bool),
 				Timer:  int(res["timer"].(float64)),

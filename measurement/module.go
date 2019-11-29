@@ -20,7 +20,7 @@ type Module struct {
 
 // Send sends the module data to the API
 func (m *Module) Send() {
-	log.Println("Module send")
+	log.Println("MOD:", m.Temperature, m.GroundHumidity, m.BatteryLevel, m.RFAddress)
 
 	data := make(map[string]interface{}, 4)
 	res := make(map[string]interface{})

@@ -67,7 +67,6 @@ func handleServerConnection(conn net.Conn) {
 	scanner := bufio.NewScanner(conn)
 	for scanner.Scan() {
 		msg := scanner.Text()
-		log.Println("Server received:", msg)
 
 		if strings.Contains(msg, "HELO") {
 			conn.Write([]byte("OK\n"))

@@ -18,7 +18,7 @@ type Actuator struct {
 
 // Send sends the actuator data to the API
 func (a *Actuator) Send() {
-	log.Println("Actuator send")
+	log.Println("ACT:", a.WaterConsumption, a.ReservoirLevel)
 
 	data := make(map[string]interface{}, 3)
 	res := make(map[string]interface{})

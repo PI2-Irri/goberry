@@ -37,7 +37,7 @@ func (c *Command) ToString() string {
 
 // Send parses and send the command to the tcp socket
 func (c *Command) Send() {
+	log.Println("CMD:", c.Status, c.Timer)
 	cmd := c.ToString()
-	log.Println("Sending:", cmd)
 	socket.ClientQueue <- cmd
 }

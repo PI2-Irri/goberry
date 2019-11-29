@@ -72,7 +72,6 @@ func (c *Client) connect() {
 	// }
 
 	for msg := range ClientQueue {
-		log.Println("Client queue received:", msg)
 		handleClientConnection(conn, msg)
 	}
 
