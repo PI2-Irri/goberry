@@ -81,8 +81,13 @@ func (c *Client) connect() {
 func handleClientConnection(conn net.Conn, msg string) {
 	// connBuffer := bufio.NewReader(conn)
 
+	n, err := conn.Write([]byte("HELO\n"))
+	if err != nil || n == 0 {
+		log.Fatal("Error, cant connect to server")
+	}
+
 	message := []byte(msg + "\n")
-	n, err := conn.Write(message)
+	n, err = conn.Write(message)
 	if err != nil || n != len(message) {
 		log.Println("Error while trying to send message to server")
 		log.Println("\tError:", err)
